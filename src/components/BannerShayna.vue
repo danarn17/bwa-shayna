@@ -17,20 +17,25 @@
 
                 <ul>
                   <li class="w-icon active">
-                    <a href="#">
+                    <a
+                      href="#"
+                      @click="saveKeranjang(itemProduct.id,itemProduct.name,itemProduct.price,itemProduct.galleries[0].photo)"
+                    >
                       <i class="icon_bag_alt"></i>
                     </a>
                   </li>
                   <li class="quick-view">
-                    <a href="product.html">+ Quick View</a>
+                    <router-link v-bind:to="'/product/'+itemProduct.id">+ Quick View</router-link>
                   </li>
                 </ul>
               </div>
               <div class="pi-text">
                 <div class="catagory-name">{{ itemProduct.type }}</div>
-                <a href="#">
-                  <h5>{{ itemProduct.name }}</h5>
-                </a>
+                <router-link to="/product">
+                  <a href="#">
+                    <h5>{{ itemProduct.name }}</h5>
+                  </a>
+                </router-link>
                 <div class="product-price">
                   Rp. {{ itemProduct.price }}
                   <span>$35.00</span>
@@ -56,8 +61,24 @@ export default {
   components: { carousel },
   data() {
     return {
-      products: []
+      products: [],
+      keranjangUser: []
     };
+  },
+  methods: {
+    saveKeranjang(idProduct, nameProduct, price, photo) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: price,
+        photo: photo
+      };
+      this.keranjangUser.push(productStored);
+
+      const parsed = JSON.stringify(this.keranjangUser);
+      localStorage.setItem("keranjangUser", parsed);
+      window.location.reload;
+    }
   },
   mounted() {
     axios
