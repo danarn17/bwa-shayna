@@ -43,7 +43,7 @@
                         <td class="cart-title first-row text-center">
                           <h5>{{ item.name }}</h5>
                         </td>
-                        <td class="p-price first-row">Rp. {{item.price}}</td>
+                        <td class="p-price first-row">Rp. {{item.price}} x {{item.banyak}}</td>
                         <td class="delete-item">
                           <a href="#">
                             <i class="material-icons" @click="removeItem(item.id)">close</i>
@@ -71,6 +71,7 @@
                         id="namaLengkap"
                         aria-describedby="namaHelp"
                         placeholder="Masukan Nama"
+                        v-model="customerInfo.name"
                       />
                     </div>
                     <div class="form-group">
@@ -81,6 +82,7 @@
                         id="emailAddress"
                         aria-describedby="emailHelp"
                         placeholder="Masukan Email"
+                        v-model="customerInfo.email"
                       />
                     </div>
                     <div class="form-group">
@@ -91,11 +93,17 @@
                         id="noHP"
                         aria-describedby="noHPHelp"
                         placeholder="Masukan No. HP"
+                        v-model="customerInfo.number"
                       />
                     </div>
                     <div class="form-group">
                       <label for="alamatLengkap">Alamat Lengkap</label>
-                      <textarea class="form-control" id="alamatLengkap" rows="3"></textarea>
+                      <textarea
+                        class="form-control"
+                        id="alamatLengkap"
+                        rows="3"
+                        v-model="customerInfo.address"
+                      ></textarea>
                     </div>
                   </form>
                 </div>
@@ -136,7 +144,7 @@
                       <span>Shayna</span>
                     </li>
                   </ul>
-                  <router-link to="/success" class="proceed-btn">I ALREADY PAID</router-link>
+                  <a href="#" @click="checkout" class="proceed-btn">I ALREADY PAID</a>
                 </div>
               </div>
             </div>
@@ -145,8 +153,6 @@
       </div>
     </section>
     <!-- Shopping Cart Section End -->
-
-    <FooterShayna />
   </div>
 </template>
 
@@ -155,18 +161,22 @@
 // import HelloWorld from "@/components/HelloWorld.vue";
 
 import HeaderShayna from "@/components/HeaderShayna.vue";
-import FooterShayna from "@/components/FooterShayna.vue";
+import axios from "axios";
 
 export default {
   name: "cart",
   components: {
-    HeaderShayna,
-
-    FooterShayna
+    HeaderShayna
   },
   data() {
     return {
-      keranjangUser: []
+      keranjangUser: [],
+      customerInfo: {
+        name: "",
+        email: "",
+        number: "",
+        address: ""
+      }
     };
   },
   methods: {
@@ -186,6 +196,25 @@ export default {
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
       window.location.reload;
+    },
+    // checkout
+    checkout() {
+      let productIds = this.keranjangUser.map(function(product) {
+        return product.id;
+      });
+      let checkoutData = {
+        name: this.customerInfo.name,
+        email: this.customerInfo.email,
+        number: this.customerInfo.number,
+        address: this.customerInfo.address,
+        transaction_total: this.totalBiaya,
+        transaction_status: "PENDING",
+        transaction_details: productIds
+      };
+      axios
+        .post("http://shayna-backend.test/api/checkout", checkoutData)
+        .then(() => this.$router.push("success"))
+        .catch(err => console.log(err));
     }
   },
   mounted() {

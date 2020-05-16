@@ -42,7 +42,7 @@
                           </td>
                           <td class="si-text">
                             <div class="product-selected">
-                              <p>Rp. {{ detail.price }} x 1</p>
+                              <p>Rp. {{ detail.price }} x{{ detail.banyak}}</p>
                               <h6>{{ detail.name }}</h6>
                             </div>
                           </td>
@@ -104,7 +104,6 @@ export default {
 
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
-      window.location.reload;
     }
   },
   mounted() {

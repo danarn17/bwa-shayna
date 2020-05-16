@@ -62,7 +62,8 @@ export default {
   data() {
     return {
       products: [],
-      keranjangUser: []
+      keranjangUser: [],
+      compKey: 0
     };
   },
   methods: {
@@ -77,7 +78,10 @@ export default {
 
       const parsed = JSON.stringify(this.keranjangUser);
       localStorage.setItem("keranjangUser", parsed);
-      window.location.reload;
+      this.forceRerender();
+    },
+    forceRerender() {
+      this.compKey += 1;
     }
   },
   mounted() {
